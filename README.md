@@ -1,3 +1,42 @@
+# LearnX - Interactive Learning Platform
+
+Requirements met:
+- User registration and login (learners)
+- Interactive content: text, video, quizzes
+- Clickstream tracking: clicks, page views, video events, quiz attempts
+- Data stored in PostgreSQL via Prisma
+- Deployable on Vercel (free tier)
+
+## Local setup
+1. Create `.env` with:
+```
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DB?schema=public"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="changeme-32-characters-min"
+```
+2. Install deps and run migrations:
+```
+npm install
+npx prisma migrate dev --name init
+npx prisma db seed
+```
+3. Start app:
+```
+npm run dev
+```
+
+## Deploy to Vercel
+1. Push to GitHub.
+2. Import repo in Vercel.
+3. Add env vars: `DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL` (your Vercel URL).
+4. Add Postgres (Neon/Neon.tech free) and set connection string as `DATABASE_URL`.
+
+## Tech
+- Next.js App Router, TypeScript, Tailwind
+- Auth: NextAuth (credentials)
+- ORM: Prisma + PostgreSQL
+- Analytics: custom `/api/events` endpoint
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
