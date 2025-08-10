@@ -4,9 +4,12 @@ import { VideoPlayer } from "@/components/video-player";
 import { Quiz } from "@/components/quiz";
 import { EventTracker } from "@/components/event-tracker";
 
-export default async function CoursePage({ params }: { params: { slug: string } }) {
+export default async function CoursePage(
+  props: { params: Promise<{ slug: string }> }
+) {
+  const { slug } = await props.params;
   const course = await prisma.course.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     include: { modules: { include: { quiz: { include: { questions: true } } }, orderBy: { index: "asc" } } },
   });
   if (!course) return notFound();

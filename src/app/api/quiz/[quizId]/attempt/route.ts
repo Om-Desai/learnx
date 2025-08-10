@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/server/prisma";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/server/auth";
 
 const bodySchema = z.object({
   answersIdx: z.array(z.number()),
@@ -10,14 +10,16 @@ const bodySchema = z.object({
 
 export async function POST(
   req: Request,
-  { params }: { params: { quizId: string } }
+  context: { params: Promise<{ quizId: string }> }
 ) {
   const session = await getServerSession(authOptions);
-  const userId = (session?.user as any)?.id;
+  const userId = session?.user?.id;
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { quizId } = await context.params;
+
   const quiz = await prisma.quiz.findUnique({
-    where: { id: params.quizId },
+    where: { id: quizId },
     include: { questions: { orderBy: { index: "asc" } } },
   });
   if (!quiz) return NextResponse.json({ error: "Not found" }, { status: 404 });

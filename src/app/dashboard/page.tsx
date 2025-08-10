@@ -1,11 +1,11 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/server/auth";
 import Link from "next/link";
 import { prisma } from "@/server/prisma";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
-  const userId = (session?.user as any)?.id;
+  const userId = session?.user?.id;
   const courses = await prisma.course.findMany({ orderBy: { createdAt: "asc" } });
   return (
     <div className="space-y-4">

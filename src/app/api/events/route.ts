@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/server/prisma";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/server/auth";
 
 const eventSchema = z.object({
   type: z.string(),
   page: z.string().optional(),
   element: z.string().optional(),
-  metadata: z.any().optional(),
+  metadata: z.unknown().optional(),
   sessionId: z.string().optional(),
 });
 
@@ -26,9 +27,9 @@ export async function POST(req: Request) {
       type,
       page,
       element,
-      metadata: metadata as any,
+      metadata: metadata as Prisma.InputJsonValue | undefined,
       sessionId,
-      userId: (session?.user as any)?.id ?? null,
+      userId: session?.user?.id ?? null,
       userAgent: req.headers.get("user-agent") ?? undefined,
       ip: req.headers.get("x-forwarded-for") ?? undefined,
     },
